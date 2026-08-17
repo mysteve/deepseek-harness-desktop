@@ -6,19 +6,18 @@ import { useI18n } from '../store/modules/setting'
 const appWindow = getCurrentWindow()
 
 /**
- * 无边框窗口的隐形窗控件层，悬浮于内嵌 dsh 页面之上（页面铺满整个窗口）。
+ * 无边框窗口的无痕标题条带，位于 iframe 之上（页面整体下移 36px）。
  *
- * 布局（依据 dsh 页面实测 DOM 几何）：
- * - 顶部 12px 全宽透明拖拽条：左段（dsh 侧边栏顶部控件 x<270px）
- *   pointer-events-none 点击穿透，其余区段 data-tauri-drag-region="deep"
- *   可拖动窗口、双击最大化/还原。12px 故意压到 dsh 顶部按钮（y≈12 起）之上，
- *   仅占其上方空白，不遮挡按钮。
- * - 窗控按钮组（最小化/最大化/关闭）放在右上角 y=44 起，故意低于 dsh
- *   顶部按钮带（新建会话/收起侧边栏/Session log 等，y≈12-44），二者不重叠。
- *   平时透明隐形，hover 才显形。
+ * 为什么是独立条带而非悬浮层：iframe 内 dsh 页面右侧从 y≈12 起层层布满
+ * 可点按钮（Session log、复制、上下文注入等），悬浮在任何 y 都会遮挡其中
+ * 某一层。独立条带把 iframe 完整下移到条带之下，iframe 可交互区 100% 无遮挡。
  *
- * z-40 高于调试抽屉（z-30）：抽屉顶部 12px 被拖拽条覆盖无交互损失，
- * 窗控按钮悬于抽屉右上角之上始终可达。
+ * 无痕处理：无应用名、无下边框、无背景（透明，直接透出 iframe 之上的窗口
+ * 底色），整条 data-tauri-drag-region="deep" 可拖动、双击最大化/还原。
+ * 右侧窗控按钮平时透明、hover 才显形。按钮是可点元素，与拖拽区共存无需特殊处理。
+ *
+ * z-40 高于调试抽屉（z-30）：抽屉展开时其顶部 36px 被条带覆盖（抽屉顶部为
+ * padding/标题无交互，无副作用），窗控始终可达、窗口依然可拖。
  */
 export default function WindowChrome() {
   const { t } = useI18n()
@@ -40,16 +39,11 @@ export default function WindowChrome() {
   }, [])
 
   return (
-    <>
-      {/* 顶部 12px 全宽透明拖拽条 */}
-      <div className="absolute inset-x-0 top-0 z-40 flex h-3 select-none">
-        {/* dsh 侧边栏顶部控件区（新建会话/收起侧边栏等 x<270px）：点击穿透给 iframe */}
-        <div className="pointer-events-none w-72 shrink-0" />
-        {/* 主内容区顶带：隐形拖拽区 */}
-        <div data-tauri-drag-region="deep" className="min-w-0 flex-1" />
-      </div>
-      {/* 右上角窗控按钮组：y=44 起，低于 dsh 顶部按钮带（y≈12-44），不重叠 */}
-      <div className="absolute right-0 top-11 z-40 flex select-none items-stretch">
+    <header
+      data-tauri-drag-region="deep"
+      className="relative z-40 flex h-9 shrink-0 select-none items-stretch justify-end"
+    >
+      <div className="flex h-full items-stretch">
         <button
           type="button"
           title={t('titlebar.minimize')}
@@ -75,6 +69,6 @@ export default function WindowChrome() {
           <X className="size-4" />
         </button>
       </div>
-    </>
+    </header>
   )
 }

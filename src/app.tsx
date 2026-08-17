@@ -27,15 +27,17 @@ export default function App() {
   const showSidebar = status === 'ready' || status === 'error'
 
   return (
-    // dsh 页面铺满整个窗口（顶到边）；窗口拖拽与窗控按钮由
-    // WindowChrome 以隐形悬浮层提供，视觉上与页面融为一体
-    <div className="relative flex h-screen w-screen flex-col overflow-hidden">
-      <HarnessWebview />
-      {status === 'ready' && <HarnessUpdater />}
-      {status === 'ready' && <DownloadToast />}
-      {showSidebar && <SidebarToggle />}
-      {showSidebar && <DebugSidebar />}
+    // 顶部无痕标题条带（拖拽 + 窗控），其下 iframe 铺满剩余空间。
+    // 条带独立于 iframe：iframe 完整下移，可交互区 100% 无遮挡。
+    <div className="flex h-screen w-screen flex-col overflow-hidden">
       <WindowChrome />
+      <div className="relative flex min-h-0 flex-1 flex-col">
+        <HarnessWebview />
+        {status === 'ready' && <HarnessUpdater />}
+        {status === 'ready' && <DownloadToast />}
+        {showSidebar && <SidebarToggle />}
+        {showSidebar && <DebugSidebar />}
+      </div>
     </div>
   )
 }
