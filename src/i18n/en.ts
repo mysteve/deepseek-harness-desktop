@@ -40,6 +40,12 @@ export const en: Translations = {
     show_in_folder: 'Open',
     close: 'Close',
   },
+  titlebar: {
+    minimize: 'Minimize',
+    maximize: 'Maximize',
+    restore: 'Restore',
+    close: 'Close',
+  },
   errors: {
     service_start_timeout: 'DeepSeek Harness startup timeout. Please check whether port {{port}} is occupied or the startup is too slow.',
     install_verify_failed: 'Package downloaded but installation verification failed.',

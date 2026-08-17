@@ -55,3 +55,7 @@ windows-sys = { version = "0.61", features = [
   "Win32_System_Threading",
   "Win32_UI_WindowsAndMessaging",
 ] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# 拦截 WebKitGTK 默认右键菜单（lib.rs 中 with_webview 使用），版本与 wry 对齐
+webkit2gtk = "2.0"

@@ -40,6 +40,12 @@ export interface Translations {
     show_in_folder: string
     close: string
   }
+  titlebar: {
+    minimize: string
+    maximize: string
+    restore: string
+    close: string
+  }
   errors: {
     service_start_timeout: string
     install_verify_failed: string

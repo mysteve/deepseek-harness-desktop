@@ -40,6 +40,12 @@ export const zh: Translations = {
     show_in_folder: '打开',
     close: '关闭',
   },
+  titlebar: {
+    minimize: '最小化',
+    maximize: '最大化',
+    restore: '还原',
+    close: '关闭',
+  },
   errors: {
     service_start_timeout: 'DeepSeek Harness 启动超时，请检查端口 {{port}} 是否被占用或启动过慢。',
     install_verify_failed: '资源包已下载，但安装校验失败。',

@@ -32,7 +32,7 @@ export default function HarnessWebview() {
 
   if (status !== 'ready') {
     return (
-      <main className="relative w-full bg-canvas">
+      <main className="relative w-full flex-1 bg-canvas">
         <Setup />
       </main>
     )

@@ -5,6 +5,7 @@ import DownloadToast from './components/download-toast'
 import HarnessUpdater from './components/harness-updater'
 import HarnessWebview from './components/harness-webview'
 import SidebarToggle from './components/sidebar-toggle'
+import WindowChrome from './components/window-chrome'
 import { useDshTheme } from './hooks/use-dsh-theme'
 import { store } from './store'
 
@@ -26,12 +27,15 @@ export default function App() {
   const showSidebar = status === 'ready' || status === 'error'
 
   return (
-    <div className="flex h-screen w-screen">
+    // dsh 页面铺满整个窗口（顶到边）；窗口拖拽与窗控按钮由
+    // WindowChrome 以隐形悬浮层提供，视觉上与页面融为一体
+    <div className="relative flex h-screen w-screen flex-col overflow-hidden">
       <HarnessWebview />
       {status === 'ready' && <HarnessUpdater />}
       {status === 'ready' && <DownloadToast />}
       {showSidebar && <SidebarToggle />}
       {showSidebar && <DebugSidebar />}
+      <WindowChrome />
     </div>
   )
 }

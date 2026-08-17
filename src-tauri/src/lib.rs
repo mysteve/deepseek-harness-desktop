@@ -146,12 +146,15 @@ fn builder() -> tauri::Builder<tauri::Wry> {
         // config 声明的窗口无法挂载 on_download，而内嵌 iframe 的 dsh 页面
         // 触发下载时 WebView2 静默保存、用户零感知，需要接管下载以给出反馈。
         .setup(|app| {
-            WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
+            let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
                 .title("Deepseek Harness Desktop")
                 .inner_size(1280.0, 840.0)
                 .min_inner_size(860.0, 620.0)
                 .resizable(true)
-                .decorations(true)
+                // 无边框窗口：标题栏由前端 TitleBar 组件自绘（拖动 + 最小化/最大化/关闭），
+                // 视觉上与内嵌页面融为一体。shadow(true) 恢复 Win11 无边框窗口的圆角阴影。
+                .decorations(false)
+                .shadow(true)
                 // 恢复 iframe 内 HTML5 拖拽（拖入图片/拖动元素）：
                 // Tauri 默认注册 wry drag_drop_handler → WebView2 SetAllowExternalDrop(false)
                 // 并注入 IDropTarget 接管拖放，iframe 内拖拽被禁用。
@@ -194,6 +197,29 @@ fn builder() -> tauri::Builder<tauri::Wry> {
                     _ => true,
                 })
                 .build()?;
+
+            // 禁用 WebView2 默认右键菜单（后退/前进/刷新/复制/检查元素等）：
+            // 网页自身的自定义右键菜单不受影响，但浏览器级的默认菜单不再弹出，
+            // 对 iframe 内的 dsh 页面同样生效。
+            #[cfg(windows)]
+            {
+                let _ = window.as_ref().with_webview(|webview| unsafe {
+                    if let Ok(core) = webview.controller().CoreWebView2() {
+                        if let Ok(settings) = core.Settings() {
+                            let _ = settings.SetAreDefaultContextMenusEnabled(false);
+                        }
+                    }
+                });
+            }
+            // Linux：拦截 WebKitGTK 默认右键菜单（信号返回 true 阻止默认处理弹出菜单）。
+            // macOS 的 wry 默认不显示原生右键菜单，无需处理。
+            #[cfg(target_os = "linux")]
+            {
+                use webkit2gtk::WebViewExt;
+                let _ = window.as_ref().with_webview(|webview| {
+                    let _ = webview.inner().connect_context_menu(|_, _, _, _| true);
+                });
+            }
             tray(&app.handle())?;
             setup(app.handle().clone());
             Ok(())
