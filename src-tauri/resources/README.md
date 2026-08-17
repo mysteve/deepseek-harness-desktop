@@ -4,7 +4,7 @@ This directory is bundled into the installer as `resources/**`.
 
 At runtime, the application downloads everything it needs into the OS user-data
 directory (the Tauri app-data dir for identifier
-`io.github.hairyf.deepseek-harness-desktop`, e.g. `%APPDATA%/io.github.hairyf.deepseek-harness-desktop/` on Windows):
+`io.github.mysteve.deepseek-harness-desktop`, e.g. `%APPDATA%/io.github.mysteve.deepseek-harness-desktop/` on Windows):
 
 - `runtime/` — the bundled Node.js runtime (downloaded on first run)
 - `dependencies/dsh/` — the packaged DeepSeek Harness distribution (downloaded from the

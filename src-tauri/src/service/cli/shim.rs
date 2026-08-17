@@ -407,9 +407,9 @@ mod tests {
 
     fn sample_app_dir() -> PathBuf {
         if cfg!(windows) {
-            PathBuf::from(r"C:\Users\test\AppData\Roaming\io.github.hairyf.deepseek-harness-desktop")
+            PathBuf::from(r"C:\Users\test\AppData\Roaming\io.github.mysteve.deepseek-harness-desktop")
         } else {
-            PathBuf::from("/home/test/.local/share/io.github.hairyf.deepseek-harness-desktop")
+            PathBuf::from("/home/test/.local/share/io.github.mysteve.deepseek-harness-desktop")
         }
     }
 
@@ -424,7 +424,7 @@ mod tests {
 
     #[test]
     fn cmd_shim_escapes_percent() {
-        let dir = PathBuf::from(r"C:\Users\100%test\AppData\Roaming\io.github.hairyf.deepseek-harness-desktop");
+        let dir = PathBuf::from(r"C:\Users\100%test\AppData\Roaming\io.github.mysteve.deepseek-harness-desktop");
         let content = build_cmd_shim(&dir);
         assert!(content.contains("100%%test"));
         assert!(!content.contains(r#"set "APP_DIR=C:\Users\100%test""#));
@@ -464,7 +464,7 @@ mod tests {
 
     #[test]
     fn ps1_shim_escapes_quotes() {
-        let dir = PathBuf::from(r"C:\Users\o'brien\AppData\Roaming\io.github.hairyf.deepseek-harness-desktop");
+        let dir = PathBuf::from(r"C:\Users\o'brien\AppData\Roaming\io.github.mysteve.deepseek-harness-desktop");
         let content = build_ps1_shim(&dir);
         assert!(content.contains(r"o''brien"));
     }
